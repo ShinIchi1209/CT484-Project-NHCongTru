@@ -1,3 +1,4 @@
+import 'package:ct484_project/screens/account_edit.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -14,13 +15,12 @@ class AppDrawer extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Account edit'),
-            onTap: () {
-              Navigator.of(context);
-              // .pushReplacementNamed(UserProductsScreen.routeName);
-            },
-          ),
+              leading: const Icon(Icons.edit),
+              title: const Text('Account edit'),
+              onTap: () {
+                Navigator.of(context)
+                    .pushReplacementNamed(AccountEdit.routeName);
+              }),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
