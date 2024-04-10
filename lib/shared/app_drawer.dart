@@ -15,6 +15,14 @@ class AppDrawer extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed('/');
+            },
+          ),
+          const Divider(),
+          ListTile(
               leading: const Icon(Icons.edit),
               title: const Text('Account edit'),
               onTap: () {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../shared/app_drawer.dart';
 
 class AccountEdit extends StatefulWidget {
   static const routeName = '/accountEdit';
@@ -17,6 +18,7 @@ class _AccountEditState extends State<AccountEdit> {
       appBar: AppBar(
         title: Text('Account Edit'),
       ),
+      drawer: const AppDrawer(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
