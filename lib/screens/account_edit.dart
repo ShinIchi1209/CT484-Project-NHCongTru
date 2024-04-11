@@ -4,7 +4,10 @@ import '../shared/app_drawer.dart';
 class AccountEdit extends StatefulWidget {
   static const routeName = '/accountEdit';
 
+  const AccountEdit({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _AccountEditState createState() => _AccountEditState();
 }
 
@@ -16,7 +19,7 @@ class _AccountEditState extends State<AccountEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Account Edit'),
+        title: const Text('Account Edit'),
       ),
       drawer: const AppDrawer(),
       body: SingleChildScrollView(
@@ -26,7 +29,7 @@ class _AccountEditState extends State<AccountEdit> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'New Email',
                 ),
                 onChanged: (value) {
@@ -35,9 +38,9 @@ class _AccountEditState extends State<AccountEdit> {
                   });
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'New Password',
                 ),
                 onChanged: (value) {
@@ -47,12 +50,12 @@ class _AccountEditState extends State<AccountEdit> {
                 },
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   // Thực hiện cập nhật thông tin
                 },
-                child: Text('Update'),
+                child: const Text('Update'),
               ),
             ],
           ),
