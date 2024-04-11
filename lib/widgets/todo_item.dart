@@ -4,16 +4,16 @@ import '../models/todo.dart';
 
 class ToDoItem extends StatelessWidget {
   final ToDo todo;
-  // ignore: prefer_typing_uninitialized_variables
-  final onToDoChanged;
-  // ignore: prefer_typing_uninitialized_variables
-  final onDeleteItem;
+  // // ignore: prefer_typing_uninitialized_variables
+  // final onToDoChanged;
+  // // ignore: prefer_typing_uninitialized_variables
+  // final onDeleteItem;
 
   const ToDoItem({
     super.key,
     required this.todo,
-    required this.onToDoChanged,
-    required this.onDeleteItem,
+    // required this.onToDoChanged,
+    // required this.onDeleteItem,
   });
 
   @override
@@ -23,7 +23,7 @@ class ToDoItem extends StatelessWidget {
       child: ListTile(
         onTap: () {
           // print('Clicked on Todo Item.');
-          onToDoChanged(todo);
+          // onToDoChanged(todo);
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -57,7 +57,7 @@ class ToDoItem extends StatelessWidget {
             icon: const Icon(Icons.delete),
             onPressed: () {
               // print('Clicked on delete icon');
-              onDeleteItem(todo.id);
+              // onDeleteItem(todo.id);
             },
           ),
         ),

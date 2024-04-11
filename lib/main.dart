@@ -1,11 +1,10 @@
-import 'package:ct484_project/screens/account_edit.dart';
 import 'package:ct484_project/screens/auth/auth_manager.dart';
 import 'package:ct484_project/screens/auth/auth_screen.dart';
 import 'package:ct484_project/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' show dotenv;
+import 'package:provider/provider.dart' show ChangeNotifierProvider, Consumer, MultiProvider;
 import './screens/home.dart';
 //import './screens/account_edit.dart';
 
@@ -22,15 +21,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   title: 'ToDo App',
-    //   routes: {
-    //     '/': (ctx) => const Home(),
-    //     '/accountEdit': (ctx) => const AccountEdit(),
-    //   },
-    //   initialRoute: '/',
-    // );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -56,10 +46,11 @@ class MyApp extends StatelessWidget {
                           : const SafeArea(child: AuthScreen());
                     },
                   ),
-            routes:  {
-               '/accountEdit': (ctx) => const AccountEdit(),
+            routes:  const {
             },
             onGenerateRoute: (settings) {
+              return null;
+            
               // Your onGenerateRoute logic
             },
           );

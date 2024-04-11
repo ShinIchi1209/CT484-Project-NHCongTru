@@ -1,6 +1,5 @@
 import 'package:ct484_project/screens/account_edit.dart';
 import 'package:ct484_project/screens/auth/auth_manager.dart';
-import 'package:ct484_project/screens/auth/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
