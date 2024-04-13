@@ -15,7 +15,7 @@ dependencies:
   intl: ^0.18.1
   provider: ^6.1.2
   flutter_dotenv: ^5.1.0
-  http: ^1.2.1
+  http: ^1.2.0
   shared_preferences: ^2.2.2
 
 dev_dependencies:
@@ -27,3 +27,4 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/images/todo.png

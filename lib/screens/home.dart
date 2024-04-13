@@ -37,83 +37,102 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('To-Do List'),
+        backgroundColor: Color.fromARGB(255, 110, 138, 240),
+        title: Text('To-Do List'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              _showAddToDoDialog(context);
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: Container(
+              height: 40,
+              width: 65,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(65),
+                child: Image.asset('assets/images/todo.png'),
+              ),
+            ),
           ),
         ],
       ),
       body: _buildToDoList(),
       drawer: const AppDrawer(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showAddToDoDialog(context);
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Color.fromARGB(255, 241, 138, 172),
+        foregroundColor: Theme.of(context).primaryColor,
+        elevation: 5.0,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
   Widget _buildToDoList() {
-    return ListView.builder(
-      itemCount: _toDos.length,
-      itemBuilder: (context, index) {
-        final todo = _toDos[index];
-        return GestureDetector(
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
+      child: ListView.builder(
+        itemCount: _toDos.length,
+        itemBuilder: (context, index) {
+          final todo = _toDos[index];
+          return GestureDetector(
             child: Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          child: ListTile(
-            onTap: () {
-              _showUpdateToDoDialog(context, todo);
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            tileColor: Colors.white,
-            leading: Checkbox(
-              value: todo.isDone,
-              onChanged: (newValue) {
-                _toggleToDoStatus(todo, newValue ?? false);
-              },
-            ),
-            title: Text(
-              todo.todoText!,
-              style: TextStyle(
-                fontSize: 16,
-                color: const Color(0xFF3A3A3A),
-                decoration: todo.isDone ? TextDecoration.lineThrough : null,
-              ),
-            ),
-            subtitle: Text(
-              todo.todoDescription ??
-                  '', // Hiển thị mô tả, nếu không có thì là chuỗi rỗng
-              style: const TextStyle(
-                color: Color(0xFF757575),
-              ),
-            ),
-            trailing: Container(
-              padding: const EdgeInsets.all(0),
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              height: 35,
-              width: 35,
-              decoration: BoxDecoration(
-                color: const Color(0xFFDA4040),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: IconButton(
-                color: const Color(0xFFEEEFF5),
-                iconSize: 18,
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  if (todo.id != null) {
-                    _deleteToDoItem(todo.id!);
-                  }
+              margin: const EdgeInsets.only(bottom: 20),
+              child: ListTile(
+                onTap: () {
+                  _showUpdateToDoDialog(context, todo);
                 },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 2),
+                tileColor: Color.fromARGB(255, 176, 200, 236),
+                leading: Checkbox(
+                  value: todo.isDone,
+                  onChanged: (newValue) {
+                    _toggleToDoStatus(todo, newValue ?? false);
+                  },
+                ),
+                title: Text(
+                  todo.todoText!,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color(0xFF3A3A3A),
+                    decoration: todo.isDone ? TextDecoration.lineThrough : null,
+                  ),
+                ),
+                subtitle: Text(
+                  todo.todoDescription ?? '',
+                  style: const TextStyle(
+                    color: Color(0xFF757575),
+                  ),
+                ),
+                trailing: Container(
+                  padding: const EdgeInsets.all(0),
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  height: 35,
+                  width: 35,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDA4040),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: IconButton(
+                    color: const Color(0xFFEEEFF5),
+                    iconSize: 18,
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      if (todo.id != null) {
+                        _deleteToDoItem(todo.id!);
+                      }
+                    },
+                  ),
+                ),
               ),
             ),
-          ),
-        ));
-      },
+          );
+        },
+      ),
     );
   }
 
