@@ -1,20 +1,18 @@
 import 'package:ct484_project/models/todo.dart';
-import 'package:ct484_project/screens/todos/EditToDoPage.dart';
-import 'package:ct484_project/services/todos_service.dart';
+import 'package:ct484_project/screens/todos/todos_manager.dart';
 import 'package:flutter/material.dart';
-import '../shared/app_drawer.dart';
+import 'package:provider/provider.dart';
+import 'shared/app_drawer.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final _toDosService = ToDosService();
-  List<ToDo> _toDos = [];
+  late final ToDosManager _toDosManager;
   final _todoController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _todoControllerE = TextEditingController();
@@ -23,26 +21,24 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    _toDosManager = Provider.of<ToDosManager>(context, listen: false);
     _fetchToDos();
   }
 
   Future<void> _fetchToDos() async {
-    final List<ToDo> toDos = await _toDosService.fetchToDos();
-    setState(() {
-      _toDos = toDos;
-    });
+    await _toDosManager.fetchToDos();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 110, 138, 240),
-        title: Text('To-Do List'),
+        backgroundColor: const Color.fromARGB(255, 110, 138, 240),
+        title: const Text('To-Do List'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: Container(
+            child: SizedBox(
               height: 40,
               width: 65,
               child: ClipRRect(
@@ -53,28 +49,35 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: _buildToDoList(),
+      body: RefreshIndicator(
+        onRefresh: _toDosManager.fetchToDos,
+        child: Consumer<ToDosManager>(
+          builder: (context, manager, child) {
+            return _buildToDoList(manager.items);
+          },
+        ),
+      ),
       drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showAddToDoDialog(context);
         },
-        child: const Icon(Icons.add),
-        backgroundColor: Color.fromARGB(255, 241, 138, 172),
+        backgroundColor: const Color.fromARGB(255, 241, 138, 172),
         foregroundColor: Theme.of(context).primaryColor,
         elevation: 5.0,
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
-  Widget _buildToDoList() {
+  Widget _buildToDoList(List<ToDo> toDos) {
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
       child: ListView.builder(
-        itemCount: _toDos.length,
+        itemCount: toDos.length,
         itemBuilder: (context, index) {
-          final todo = _toDos[index];
+          final todo = toDos[index];
           return GestureDetector(
             child: Container(
               margin: const EdgeInsets.only(bottom: 20),
@@ -87,11 +90,12 @@ class _HomeState extends State<Home> {
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 2),
-                tileColor: Color.fromARGB(255, 176, 200, 236),
+                tileColor: const Color.fromARGB(255, 176, 200, 236),
                 leading: Checkbox(
                   value: todo.isDone,
                   onChanged: (newValue) {
                     _toggleToDoStatus(todo, newValue ?? false);
+                    //_toDosManager.toggleDoneStatus(todo);
                   },
                 ),
                 title: Text(
@@ -138,14 +142,7 @@ class _HomeState extends State<Home> {
 
   Future<void> _toggleToDoStatus(ToDo todo, bool newValue) async {
     final updatedToDo = todo.copyWith(isDone: newValue);
-    final success = await _toDosService.updateToDo(updatedToDo);
-    if (success) {
-      setState(() {
-        todo.isDone = newValue;
-      });
-    } else {
-      // Handle error
-    }
+    await _toDosManager.updateToDo(updatedToDo);
   }
 
   Future<void> _showAddToDoDialog(BuildContext context) async {
@@ -165,7 +162,7 @@ class _HomeState extends State<Home> {
               ),
               const SizedBox(height: 8),
               TextField(
-                controller: _descriptionController, // Gán controller
+                controller: _descriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Description',
                 ),
@@ -212,7 +209,7 @@ class _HomeState extends State<Home> {
               ),
               const SizedBox(height: 8),
               TextField(
-                controller: _descriptionControllerE, // Gán controller
+                controller: _descriptionControllerE,
                 decoration: const InputDecoration(
                   labelText: 'Description',
                 ),
@@ -229,6 +226,7 @@ class _HomeState extends State<Home> {
             ElevatedButton(
               onPressed: () {
                 _updateToDo(todo);
+                //_toDosManager.updateToDo(todo);
                 Navigator.pop(context);
               },
               child: const Text('Update'),
@@ -241,67 +239,32 @@ class _HomeState extends State<Home> {
 
   void _updateToDo(ToDo todo) async {
     final newToDoText = _todoControllerE.text.trim();
-    final newToDoDescription = _descriptionController.text.trim();
+    final newToDoDescription = _descriptionControllerE.text.trim();
     if (newToDoText.isNotEmpty) {
       final updatedToDo = todo.copyWith(
         todoText: newToDoText,
         todoDescription: newToDoDescription,
       );
-      final success = await _toDosService.updateToDo(updatedToDo);
-      if (success) {
-        setState(() {
-          final index = _toDos.indexWhere((element) => element.id == todo.id);
-          if (index != -1) {
-            _toDos[index] = updatedToDo;
-          }
-        });
-      } else {
-        // Handle error
-      }
-    } else {
-      // Xử lý lỗi khi ToDo không hợp lệ
+      await _toDosManager.updateToDo(updatedToDo);
     }
   }
 
-// Thêm ToDo mới
   void _addNewToDo() async {
     final newToDoText = _todoController.text.trim();
-    final newToDoDescription =
-        _descriptionController.text.trim(); // Lấy mô tả từ controller
+    final newToDoDescription = _descriptionController.text.trim();
     if (newToDoText.isNotEmpty) {
       final newToDo = ToDo(
-        id: '', // ID sẽ được tạo tự động
         todoText: newToDoText,
-        todoDescription: newToDoDescription, // Gán mô tả từ controller
+        todoDescription: newToDoDescription,
+        isDone: false, id: '',
       );
-      final addedToDo = await _toDosService.addToDo(newToDo);
-      if (addedToDo != null) {
-        setState(() {
-          _toDos.add(addedToDo);
-        });
-      } else {
-        // Xử lý lỗi
-      }
+      await _toDosManager.addToDo(newToDo);
       _todoController.clear();
-      _descriptionController
-          .clear(); // Xóa nội dung trong controller mô tả sau khi thêm ToDo
+      _descriptionController.clear();
     }
   }
 
-// Xóa ToDo
   void _deleteToDoItem(String id) {
-    setState(() {
-      _toDos.removeWhere((todo) => todo.id == id);
-    });
-    if (id != null) {
-      _toDosService.deleteToDo(id); // Gọi hàm xóa ToDo từ service
-    }
-  }
-
-// Hủy trình điều khiển khi widget được hủy bỏ
-  @override
-  void dispose() {
-    _descriptionController.dispose(); // Hủy trình điều khiển
-    super.dispose();
+    _toDosManager.deleteToDo(id);
   }
 }

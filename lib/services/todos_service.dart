@@ -1,26 +1,24 @@
 import 'dart:convert';
 import 'package:ct484_project/models/todo.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/auth_token.dart';
 import 'firebase_service.dart';
 
 class ToDosService extends FirebaseService {
+  // ignore: use_super_parameters
   ToDosService([AuthToken? authToken]) : super(authToken);
-
-  Future<List<ToDo>> fetchToDos({bool filteredByUser = false}) async {
+  Future<List<ToDo>> fetchToDos({bool filteredByUser = true}) async {
     final List<ToDo> todos = [];
-
     try {
-      final filters =
-          filteredByUser ? 'orderBy = "creatorId"&equalTo="$userId"' : '';
+      String filters = '';
+      if (filteredByUser) {
+        filters = 'orderBy="creatorId"&equalTo="$userId"';
+      }
 
       final todosMap = await httpFetch(
         '$databaseUrl/todos.json?auth=$token&$filters',
       ) as Map<String, dynamic>?;
-
-      // final userFavoritesMap = await httpFetch(
-      //   '$databaseUrl/userFavorites/$userId.json?auth=$token',
-      // ) as Map<String, dynamic>?;
 
       todosMap?.forEach((id, todo) {
         todos.add(ToDo.fromJson({
@@ -30,7 +28,9 @@ class ToDosService extends FirebaseService {
       });
       return todos;
     } catch (error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       return todos;
     }
   }
@@ -47,10 +47,11 @@ class ToDosService extends FirebaseService {
             }),
         ),
       ) as Map<String, dynamic>?;
-
-      return todo.copyWith(
+      await updateToDo(todo.copyWith(
         id: newToDo!['name'],
-      );
+      ));
+      return todo;
+
     } catch (error) {
       print(error);
       return null;
@@ -66,7 +67,9 @@ class ToDosService extends FirebaseService {
       );
       return true;
     } catch (error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       return false;
     }
   }
@@ -79,21 +82,25 @@ class ToDosService extends FirebaseService {
       );
       return true;
     } catch (error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       return false;
     }
   }
 
-  Future<bool> saveFavoriteStatus(ToDo todo) async {
+  Future<bool> saveDoneStatus(ToDo todo) async {
     try {
       await httpFetch(
-        '$databaseUrl/userFavorites/$userId/${todo.id}.json?auth=$token',
+        '$databaseUrl/todos/$userId/${todo.id}.json?auth=$token',
         method: HttpMethod.put,
         body: jsonEncode(todo.isDone),
       );
       return true;
     } catch (error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       return false;
     }
   }

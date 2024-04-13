@@ -1,18 +1,18 @@
 import 'package:ct484_project/screens/auth/auth_manager.dart';
 import 'package:ct484_project/screens/auth/auth_screen.dart';
 import 'package:ct484_project/screens/splash_screen.dart';
+import 'package:ct484_project/screens/todos/todos_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' show dotenv;
-import 'package:provider/provider.dart' show ChangeNotifierProvider, Consumer, MultiProvider;
+import 'package:provider/provider.dart'
+    show ChangeNotifierProvider, ChangeNotifierProxyProvider, Consumer, MultiProvider;
 import './screens/home.dart';
-//import './screens/account_edit.dart';
 
 void main() async {
   await dotenv.load();
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -25,6 +25,17 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (ctx) => AuthManager(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ToDosManager(),
+          child: const Home(),
+        ),
+        ChangeNotifierProxyProvider<AuthManager, ToDosManager>(
+          create: (ctx) => ToDosManager(),
+          update: (ctx, authManager, todosManager){
+            todosManager!.authToken = authManager.authToken;
+            return todosManager;
+          },
         ),
       ],
       child: Consumer<AuthManager>(
@@ -46,11 +57,10 @@ class MyApp extends StatelessWidget {
                           : const SafeArea(child: AuthScreen());
                     },
                   ),
-            routes:  const {
-            },
+            routes: const {},
             onGenerateRoute: (settings) {
               return null;
-            
+
               // Your onGenerateRoute logic
             },
           );

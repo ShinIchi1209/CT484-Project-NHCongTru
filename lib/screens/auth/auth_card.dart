@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/http_exception.dart';
-import '../../shared/dialog_utils.dart';
+import '../shared/dialog_utils.dart';
 
 import 'auth_manager.dart';
 
@@ -52,6 +52,7 @@ class _AuthCardState extends State<AuthCard> {
     } catch (error) {
       if (context.mounted) {
         showErrorDialog(
+            // ignore: use_build_context_synchronously
             context,
             (error is HttpException)
                 ? error.toString()

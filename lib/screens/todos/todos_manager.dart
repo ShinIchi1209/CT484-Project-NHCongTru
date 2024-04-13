@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:myshop/ui/screens.dart';
 
 import '../../models/todo.dart';
 import '../../models/auth_token.dart';
@@ -19,22 +18,15 @@ class ToDosManager with ChangeNotifier {
     _todosService.authToken = authToken;
   }
 
-  Future<void> fetchProducts() async {
+  Future<void> fetchToDos() async {
     _items = await _todosService.fetchToDos();
     notifyListeners();
   }
 
-  // Future<void> fetchUserProducts() async {
-  //   _items = await _productsService.fetchProducts(
-  //     filteredByUser: true,
-  //   );
-  //   notifyListeners();
-  // }
-
-  Future<void> addToDo(ToDo product) async {
-    final newProduct = await _todosService.addToDo(product);
-    if (newProduct != null){
-      _items.add(newProduct);
+  Future<void> addToDo(ToDo todo) async {
+    final newToDo = await _todosService.addToDo(todo);
+    if (newToDo != null){
+      _items.add(newToDo);
       notifyListeners();
     }
   }
@@ -47,6 +39,7 @@ class ToDosManager with ChangeNotifier {
     return [..._items]; 
   }
 
+  // ignore: non_constant_identifier_names
   List<ToDo> get DoneToDo {
     return _items.where((item) => item.isDone).toList();
   }
@@ -59,15 +52,6 @@ class ToDosManager with ChangeNotifier {
     }
   }
 
-  // void addProduct (Product product){
-  //   _items.add(
-  //     product.copyWith(
-  //       id: 'p${DateTime.now().toIso8601String()}'
-  //     ),
-  //   );
-  //   notifyListeners();
-  // }
-
   Future<void> updateToDo(ToDo todo) async{
     final index = _items.indexWhere((item) => item.id == todo.id);
     if(index >= 0){
@@ -78,22 +62,22 @@ class ToDosManager with ChangeNotifier {
     }
   }
 
-  void toggleDoneStatus(ToDo product) async {
-    final savedStatus = product.isDone;
-    product.isDone = !savedStatus;
-    if (!await _todosService.saveFavoriteStatus(product)) {
-      product.isDone = savedStatus;
+  void toggleDoneStatus(ToDo todo) async {
+    final savedStatus = todo.isDone;
+    todo.isDone = !savedStatus;
+    if (!await _todosService.saveDoneStatus(todo)) {
+      todo.isDone = savedStatus;
     }
   }
 
   Future<void> deleteToDo(String id) async{
     final index = _items.indexWhere((item) => item.id == id);
-    ToDo? existingProduct = _items[index];
+    ToDo? existingToDo = _items[index];
     _items.removeAt(index);
     notifyListeners();
 
     if (!await _todosService.deleteToDo(id)) {
-      _items.insert(index, existingProduct);
+      _items.insert(index, existingToDo);
       notifyListeners();
     }
   }

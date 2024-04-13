@@ -1,11 +1,10 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class AppBanner extends StatelessWidget {
   const AppBanner({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +17,7 @@ class AppBanner extends StatelessWidget {
       transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Color.fromARGB(255, 12, 148, 221),
+        color: const Color.fromARGB(255, 12, 148, 221),
         boxShadow: const [
           BoxShadow(
             blurRadius: 8,
