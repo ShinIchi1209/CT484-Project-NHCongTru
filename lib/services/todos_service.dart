@@ -8,14 +8,11 @@ import 'firebase_service.dart';
 class ToDosService extends FirebaseService {
   // ignore: use_super_parameters
   ToDosService([AuthToken? authToken]) : super(authToken);
-  Future<List<ToDo>> fetchToDos({bool filteredByUser = true}) async {
+  Future<List<ToDo>> fetchToDos() async {
     final List<ToDo> todos = [];
     try {
-      String filters = '';
-      if (filteredByUser) {
-        filters = 'orderBy="creatorId"&equalTo="$userId"';
-      }
-
+      String filters = 'orderBy="creatorId"&equalTo="$userId"';
+      
       final todosMap = await httpFetch(
         '$databaseUrl/todos.json?auth=$token&$filters',
       ) as Map<String, dynamic>?;
